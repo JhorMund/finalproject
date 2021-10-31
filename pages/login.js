@@ -6,16 +6,34 @@ import {
   TextField, 
   Typography 
 } from '@material-ui/core';
+import axios from 'axios';
 import NextLink from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import useStyles from '../utils/styles';
 
 export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const classes = useStyles();
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const {data} = await axios.post('/api/users/login', {
+        email, password
+      });
+      alert ('Berhasil Log In');
+    }
+    catch (err) {
+      alert (err.response.data ? err.response.data.message : err.message);
+    }
+  };
   return (
     <Layout title="Login">
-      <form className={classes.form}>
+      <form 
+        onSubmit={submitHandler}
+        className={classes.form}
+      >
         <Typography component="h1" variant="h1">
           Log in
         </Typography>
@@ -27,6 +45,7 @@ export default function Login() {
               id="email"
               label="Email"
               inputProps={{ type: 'email'}}
+              onChange= {(e) => setEmail(e.target.value)}
             ></TextField>
           </ListItem>
           <ListItem>
@@ -36,6 +55,7 @@ export default function Login() {
               id="password"
               label="Password"
               inputProps={{ type: 'password'}}
+              onChange= {(e) => setPassword(e.target.value)}
             ></TextField>
           </ListItem>
           <ListItem>
