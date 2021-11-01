@@ -1,0 +1,5 @@
+MONGODB_URI=(kasih konek di mongodb dan konek di versi 2.2.12)
+
+JWT_SECRET=somethingsecret
+
+kalau sudah kasih pancing di localhost:3000/api/seed, sudah tersambung maka pake deh
