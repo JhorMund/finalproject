@@ -91,8 +91,7 @@ function CartScreen() {
                               alt={item.name}
                               width={50}
                               height={50}
-                            >
-                            </Image>
+                            ></Image>
                           </Link>
                         </NextLink>
                       </TableCell>
@@ -109,10 +108,10 @@ function CartScreen() {
                         onChange= {(e) => 
                         updateCartHandler(item, e.target.value)
                       }
-                        >
+                      >
                           {[...Array(item.countInStock).keys()].map((x) => (
                             <MenuItem key={x+1} value={x+1}> 
-                              {x+1} 
+                              { x + 1 } 
                               </MenuItem> 
                           ))}
                         </Select>
@@ -140,7 +139,7 @@ function CartScreen() {
               <List>
                 <ListItem>
                   <Typography variant="h2">
-                    Subtotal ({cartItems.reduce((a,c ) => a + c.quantity, 0)} {''}
+                    Subtotal ({cartItems.reduce(( a , c ) => a + c.quantity, 0)} {''}
                     items) : <br />
                     Rp. {cartItems.reduce((a,c ) => a + c.quantity * c.price, 0)}
                   </Typography>

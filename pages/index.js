@@ -24,7 +24,7 @@ export default function Home(props) {
   const { state, dispatch } = useContext ( Store );
   const { products } = props;
   const addToCartHandler = async (product) => {
-    const existItem = state.cart.cartItems.find(x=>x._id === product._id);
+    const existItem = state.cart.cartItems.find( (x) =>x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products/${product._id}`);
     if(data.countInStock < quantity) {
@@ -36,15 +36,15 @@ export default function Home(props) {
   };
   const { products1 } = props;
   const addToCartHandler1 = async (product0) => {
+    const existItem = state.cart.cartItems.find( (x) =>x._id === product0._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
     const { data } = await axios.get(`/api/products2/${product0._id}`);
-    if(data.countInStock <= 0) {
+    if(data.countInStock < quantity) {
       window.alert ('Maaf. Produk Telah Habis');
       return;
     }
-    const existItem = state.cart.cartItems.find(x=>x._id === product0._id);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product0, quantity} });
-    router.push('/cart');
+    router.push('/cart2');
   };
   return (
     <Layout>

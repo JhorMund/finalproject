@@ -30,19 +30,15 @@ export default function ProductScreen(props) {
     return <div> Product Tidak Ditemukan</div>;
   }
   const addToCartHandler1 = async () => {
-    const { data } = await axios.get(`/api/products2/${product0._id}`);
-    if(data.countInStock <= 0) {
-      window.alert ('Maaf. Produk Telah Habis');
-      return;
-    }
-    const existItem = state.cart.cartItems.find(x=>x._id === product0._id);
+    const existItem = state.cart.cartItems.find((x) => x._id === product0._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(`/api/products2/${product0._id}`);
     if(data.countInStock < quantity) {
       window.alert ('Maaf. Produk Telah Habis');
       return;
     }
     dispatch({ type: 'CART_ADD_ITEM', payload: { ...product0, quantity} });
-    router.push('/cart');
+    router.push('/cart2');
   };
 
   return (

@@ -6,12 +6,12 @@ const initialState = {
   darkMode: Cookies.get('darkMode') === 'ON' ? true : false,
   cart: {
     cartItems: Cookies.get ('cartItems') 
-    ? JSON.parse(Cookies.get ('cartItems'))
-    : [],
+     ? JSON.parse(Cookies.get ('cartItems'))
+     : [],
   },
-  useInfo: Cookies.get ('useInfo') 
-    ? JSON.parse(Cookies.get ('useInfo'))
-    : null,
+    userInfo: Cookies.get ('userInfo') 
+      ? JSON.parse(Cookies.get ('userInfo'))
+      : null,
 };
 
 function reducer ( state, action ) {
@@ -41,7 +41,9 @@ function reducer ( state, action ) {
         return { ...state, cart: {...state.cart, cartItems} };
       }
       case 'USER_LOGIN':
-        return { ...state, useInfo: action.payload };
+        return { ...state, userInfo: action.payload };
+      case 'USER_LOGOUT':
+        return { ...state, userInfo: null, cart: {cartItems:[] }};
 
     default: 
       return state;
