@@ -21,7 +21,7 @@ handler.post(async ( req, res ) => {
     });
   }
   else {
-    res.status(401).send({message: 'Masukan Lagi Id Dan Juga Password, Mungkin Ada Yang Salah'});
+    res.status(401).send({message: 'Masukan Lagi Email Dan Juga Password, Mungkin Ada Yang Salah'});
   }
 });
 
