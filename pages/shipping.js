@@ -53,7 +53,7 @@ export default function Shipping() {
         address,
         numberPhone,
       }));
-      router.push('/payment');
+      router.push('/placeorder');
   };
   return (
     <Layout title="Shipping Address">

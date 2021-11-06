@@ -4,7 +4,7 @@ import NextLink from 'next/link';
 import { 
   AppBar, 
   Container, 
-  createMuiTheme, 
+  createTheme, 
   CssBaseline, 
   Link, 
   Switch, 
@@ -26,7 +26,7 @@ export default function Layout({ title, description, children }) {
   const router = useRouter();
   const { state, dispatch } = useContext ( Store );
   const { darkMode, cart, userInfo } = state;
-  const theme = createMuiTheme({
+  const theme = createTheme({
     typography: {
       h1: {
         fontSize:'1.6rem',
