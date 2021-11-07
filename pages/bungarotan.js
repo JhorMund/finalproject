@@ -1,32 +1,41 @@
-// import data from '../utils/data';
+// import data from "../utils/data";
 import { 
   Button,
-  Card, 
+  Card,
   CardActionArea, 
   CardActions, 
   CardContent, 
   CardMedia, 
-  Grid,
-  Link,
-  Typography, 
+  Grid, 
+  Typography
 } from "@material-ui/core";
 import NextLink from 'next/link';
 import Layout from "../components/Layout";
 import db from "../utils/db";
 import Product2 from "../models/Product2";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useContext } from "react";
+import { Store } from "../utils/Store";
 
-export default function bungarotan(props) {
+export default function Home(props) {
+  const router = useRouter ();
+  const { state, dispatch } = useContext ( Store );
   const { products1 } = props;
+  const addToCartHandler1 = async (product0) => {
+    const existItem = state.cart.cartItems.find( (x) =>x._id === product0._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(`/api/products2/${product0._id}`);
+    if(data.countInStock < quantity) {
+      window.alert ('Maaf. Produk Telah Habis');
+      return;
+    }
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product0, quantity} });
+    router.push('/cart2');
+  };
   return (
     <Layout>
       <div>
-        <NextLink href="/" passHref>
-          <Link>
-            <Typography>
-              Kembali
-            </Typography>
-          </Link>
-        </NextLink>
         <h1>Bunga Rotan</h1>
         <Grid container spacing={3}>
           {products1.map((product0) => (
@@ -58,6 +67,7 @@ export default function bungarotan(props) {
                     size="small" 
                     color="primary"
                     variant="contained"
+                    onClick={() => addToCartHandler1(product0)}
                   >
                     Add To Cart
                   </Button>
@@ -68,7 +78,8 @@ export default function bungarotan(props) {
         </Grid>
       </div>
     </Layout>
-  );
+    
+  )
 }
 
 export async function getServerSideProps() {

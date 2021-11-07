@@ -1,34 +1,44 @@
+// import data from "../utils/data";
 import { 
   Button,
-  Card, 
+  Card,
   CardActionArea, 
   CardActions, 
   CardContent, 
   CardMedia, 
-  Grid,
-  Link,
-  Typography, 
+  Grid, 
+  Typography
 } from "@material-ui/core";
 import NextLink from 'next/link';
 import Layout from "../components/Layout";
-import Product from "../models/Product";
-import data from '../utils/data';
 import db from "../utils/db";
+import Product from "../models/Product";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { useContext } from "react";
+import { Store } from "../utils/Store";
 
-export default function bungapapan() {
+export default function Home(props) {
+  const router = useRouter ();
+  const { state, dispatch } = useContext ( Store );
+  const { products } = props;
+  const addToCartHandler = async (product) => {
+    const existItem = state.cart.cartItems.find( (x) =>x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const { data } = await axios.get(`/api/products/${product._id}`);
+    if(data.countInStock < quantity) {
+      window.alert ('Maaf. Produk Telah Habis');
+      return;
+    }
+    dispatch({ type: 'CART_ADD_ITEM', payload: { ...product, quantity} });
+    router.push('/cart');
+  };
   return (
     <Layout>
       <div>
-        <NextLink href="/" passHref>
-          <Link>
-            <Typography>
-              Kembali
-            </Typography>
-          </Link>
-        </NextLink>
         <h1>Bunga Papan</h1>
         <Grid container spacing={3}>
-          {data.products.map((product) => (
+          {products.map((product) => (
             <Grid 
               item 
               md={4} 
@@ -57,6 +67,7 @@ export default function bungapapan() {
                     size="small" 
                     color="primary"
                     variant="contained"
+                    onClick={() => addToCartHandler(product)}
                   >
                     Add To Cart
                   </Button>
@@ -67,16 +78,17 @@ export default function bungapapan() {
         </Grid>
       </div>
     </Layout>
-  );
+    
+  )
 }
 
 export async function getServerSideProps() {
   await db.connect();
-  const products1 = await Product.find({}).lean();
+  const products = await Product.find({}).lean();
   await db.disconnect();
   return {
     props:{
-      products1: products1.map(db.convertDocToObj),
+      products: products.map(db.convertDocToObj),
     },
   };
 }

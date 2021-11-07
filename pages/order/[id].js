@@ -31,16 +31,12 @@ import { useRouter } from 'next/router';
 function reducer( state, action ) {
   switch ( action.type ){
     case 'FETCH_REQUEST':
-      return { 
-        ...state, 
-        loading: true,
-        error:'',
-      };
+      return { ...state, loading: true, error:'', };
     case 'FETCH_SUCCESS':
       return { 
         ...state, 
         loading: false, 
-        order: action.payload,
+        order: action.payload, 
         error:'' 
       };
       case 'FETCH_FAIL':
@@ -71,11 +67,13 @@ function Order({ params }) {
     orderItems, 
     itemsPrice, 
     shippingPrice, 
-    totalPrice 
+    totalPrice,
+    isDelivered,
+    deliveredAt 
   } = order;
 
   useEffect(() => {
-    if(!userInfo){
+    if (!userInfo) {
       return router.push('/login');
     }
     const fetchOrder = async () => {
@@ -84,7 +82,7 @@ function Order({ params }) {
         const { data } = await axios.get (`/api/orders/${orderId}`, {
           headers: {authorization: `Bearer ${userInfo.token}`},
         });
-        dispatch({ type: 'FETCH_SUCCESS', payload: data })
+        dispatch({ type: 'FETCH_SUCCESS', payload: data });
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: getError(err) });
       }
@@ -103,8 +101,10 @@ function Order({ params }) {
         Order {orderId}
       </Typography> {
         loading ? (<CircularProgress />)
-        : error ? <Typography className={classes.error}>{error}</Typography> 
-        : <Grid container spacing={1}>
+        : error ? (
+          <Typography className={classes.error}>{error}</Typography>
+        ) : (
+          <Grid container spacing={1}>
             <Grid item md={9} xs={12}>
               <Card className={classes.section}>
                   <List>
@@ -117,6 +117,13 @@ function Order({ params }) {
                       {shippingAddress.fullName}, {''}
                       {shippingAddress.address}, {''}
                       {shippingAddress.numberPhone}
+                    </ListItem>
+                    <ListItem>
+                      Status: {''}
+                      { isDelivered 
+                        ? `delivered at ${deliveredAt}` 
+                        : 'belum di antar'
+                      }
                     </ListItem>
                   </List>
               </Card>
@@ -243,8 +250,8 @@ function Order({ params }) {
               </Card>
             </Grid>
           </Grid>
-      }
-        
+        )
+      }  
     </Layout>
   );
 }

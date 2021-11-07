@@ -15,7 +15,7 @@ import {
   CircularProgress, 
 } from '@material-ui/core';
 import dynamic from 'next/dynamic';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import NextLink from 'next/link';
 import { Store } from '../utils/Store';
@@ -43,6 +43,11 @@ function PlaceOrder() {
   const shippingPrice = itemsPrice > 200 ? 0 : 15;
   const totalPrice = round2 ( itemsPrice + shippingPrice );
   
+  useEffect(() => {
+    if ( cartItems.length === 0){
+      router.push('/cart')
+    }
+  }, []);
   const { closeSnackbar, enqueueSnackbar } = useSnackbar();
   const [ loading, setLoading ] = useState ( false );
   const placeOrderHandler = async () => {
@@ -68,10 +73,10 @@ function PlaceOrder() {
       setLoading ( false );
       enqueueSnackbar( getError ( err ), { variant: 'error' } );
     }
-  }
+  };
 
   return (
-    <Layout title="Pesanan">
+    <Layout title="Place Order">
       <CheckoutWizard activeStep={3}></CheckoutWizard>
       <Typography component="h1" variant="h1">
         Pesanan

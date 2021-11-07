@@ -9,14 +9,12 @@ const handler = nc ({
 });
 handler.use(isAuth);
 
-handler.post(async ( req, res ) => {
+handler.get(async ( req, res ) => {
   await db.connect();
-  const newOrder = new Order({
-    ...req.body,
+  const orders = await Order.find({
     user: req.user._id,
   });
-  const order = await newOrder.save();
-  res.send(201).send(order);
+  res.send(orders);
 });
 
 export default handler;
