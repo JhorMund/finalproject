@@ -151,7 +151,7 @@ function CartScreen() {
                     color="primary"
                     fullWidth
                   >
-                    Hasil
+                    Selanjutnya
                   </Button>
                 </ListItem>
               </List>

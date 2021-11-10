@@ -1,29 +1,65 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const orderSchema = new mongoose.Schema ({
-  user: { type: mongoose.Schema.Types.ObjectId, ref:'User', required:true },
-  orderItems: [{
-    name: String,
-    quantity: Number,
-    image: String,
-    price: Number,
-  }],
-  shippingAddress: {
-    fullName: String,
-    address: String,
-    numberPhone: Number,
+const orderSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    orderItems: [
+      {
+        name: { type: String, required: true },
+        quantity: { type: Number, required: true },
+        image: { type: String, required: true },
+        price: { type: Number, required: true },
+      },
+    ],
+    shippingAddress: {
+      fullName: { type: String, required: true },
+      address: { type: String, required: true },
+      numberPhone: { type: Number, required: true }
+    },
+    itemsPrice: { type: Number, required: true },
+    shippingPrice: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    isPaid: { type: Boolean, required: true, default: false },
+    isDelivered: { type: Boolean, required: true, default: false },
+    paidAt: { type: Date },
+    deliveredAt: { type: Date },
   },
-  itemsPrice: { type: Number, required: true },
-  shippingPrice: { type: Number, required: true },
-  totalPrice: { type: Number, required: true },
-  isPaid: { type: Boolean, required: true, default: false},
-  isDelivered: { type: Boolean, required: true, default: false},
-  PaidAt: { type: Date},
-  DeliveredAt: { type: Date},
-},{
-  timestamps :true
-});
+  {
+    timestamps: true,
+  }
+);
 
-const Order = 
-  mongoose.models.Order || mongoose.model('Order', orderSchema);
+const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
 export default Order;
+
+
+// import mongoose from "mongoose";
+
+// const orderSchema = new mongoose.Schema ({
+//   user: { type: mongoose.Schema.Types.ObjectId, ref:'User', required:true },
+//   orderItems: [
+//     { name: { type: String, required: true }, 
+//       quantity: { type: String, required: true }, 
+//       image: { type: String, required: true }, 
+//       price: { type: Number, required: true } 
+//     },
+//   ],
+//   shippingAddress: { 
+//     fullName: { type: String, required: true }, 
+//     address: { type: String, required: true }, 
+//     numberPhone: { type: Number, required: true } 
+//   },
+//   itemsPrice: { type: Number, required: true },
+//   shippingPrice: { type: Number, required: true },
+//   totalPrice: { type: Number, required: true },
+//   isPaid: { type: Boolean, required: true, default: false},
+//   isDelivered: { type: Boolean, required: true, default: false},
+//   PaidAt: { type: Date},
+//   DeliveredAt: { type: Date},
+// },{
+//   timestamps :true
+// });
+
+// const Order = 
+//   mongoose.models.Order || mongoose.model('Order', orderSchema);
+// export default Order;
