@@ -15,7 +15,7 @@ import {
   CircularProgress, 
 } from '@material-ui/core';
 import dynamic from 'next/dynamic';
-import React, { useContext, useEffect, useReducer, useState } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
 import Layout from '../../components/Layout';
 import NextLink from 'next/link';
 import { Store } from '../../utils/Store';
@@ -25,7 +25,6 @@ import CheckoutWizard from '../../components/checkoutWizard';
 import { useSnackbar } from 'notistack';
 import { getError } from '../../utils/error';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 
 function reducer( state, action ) {
@@ -33,18 +32,13 @@ function reducer( state, action ) {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error:'', };
     case 'FETCH_SUCCESS':
-      return { 
-        ...state, 
-        loading: false, 
-        order: action.payload, 
-        error:'' 
-      };
-      case 'FETCH_FAIL':
-      return { 
-        ...state, 
-        loading: false, 
-        error: action.payload,
-      };
+      return { ...state, loading: false, order: action.payload, error:'' };
+    case 'FETCH_FAIL':
+      return { ...state, loading: false, error: action.payload,};
+    case 'DELIVER_SUCCESS':
+      return { ...state, loadingDeliver: false, successDeliver: true };
+    case 'DELIVER_FAIL':
+      return { ...state, loadingDeliver: false, errorDeliver: action.payload };
     default: state;
   }
 }
@@ -57,7 +51,7 @@ function Order({ params }) {
   const { userInfo } = state;
   
   
-  const[{ loading, error, order }, dispatch ] = useReducer( reducer, { 
+  const[{ loading, error, order, loadingDeliver }, dispatch ] = useReducer( reducer, { 
     loading: true, 
     order: {}, 
     error: '',
@@ -91,9 +85,26 @@ function Order({ params }) {
       fetchOrder();
     }
   }, [order]);
-  const { closeSnackbar, enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   
-
+  async function deliverOrderHandler() {
+    try {
+      dispatch({ type: 'DELIVER_REQUEST' });
+      const { data } = await axios.put(
+        `/api/orders/${order._id}/deliver`,
+        {},
+        {
+          headers: { authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      dispatch({ type: 'DELIVER_SUCCESS', payload: data });
+      enqueueSnackbar('Order is delivered', { variant: 'success' });
+    } catch (err) {
+      dispatch({ type: 'DELIVER_FAIL', payload: getError(err) });
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  }
+  
   return (
     <Layout title={`Order ${orderId}`}>
       <CheckoutWizard activeStep={3}></CheckoutWizard>
@@ -246,6 +257,19 @@ function Order({ params }) {
                       </Grid>
                     </Grid>
                   </ListItem>
+                  {userInfo.isAdmin && order.isPaid && !order.isDelivered && (
+                  <ListItem>
+                    {loadingDeliver && <CircularProgress />}
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={deliverOrderHandler}
+                    >
+                      Deliver Order
+                    </Button>
+                  </ListItem>
+                )}
                 </List>
               </Card>
             </Grid>

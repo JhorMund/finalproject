@@ -29,7 +29,7 @@ function reducer(state, action) {
     case 'FETCH_REQUEST':
       return { ...state, loading: true, error: '' };
     case 'FETCH_SUCCESS':
-      return { ...state, loading: false, summary: action.payload, error: '' };
+      return { ...state, loading: false, products: action.payload, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
     default:
@@ -43,10 +43,10 @@ function AdminDashboard() {
   const classes = useStyles();
   const { userInfo } = state;
 
-  const[{ loading, error, orders }, dispatch ] = useReducer ( 
+  const[{ loading, error, products }, dispatch ] = useReducer ( 
     reducer, { 
     loading: true, 
-    orders: [],
+    products: [],
     error: '',
   });
 
@@ -57,7 +57,7 @@ function AdminDashboard() {
     const fetchData = async () => {
       try {
         dispatch({ type: 'FETCH_REQUEST' });
-        const { data } = await axios.get(`/api/admin/orders`, {
+        const { data } = await axios.get(`/api/admin/products`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: 'FETCH_SUCCESS', payload: data });
@@ -69,7 +69,7 @@ function AdminDashboard() {
   }, []);
 
   return (
-    <Layout title="Orders">
+    <Layout title="Products">
       <Grid container spacing={1}>
         <Grid item md={3} xs={12}>
           <Card className={classes.section}>
@@ -80,8 +80,13 @@ function AdminDashboard() {
                 </ListItem>
               </NextLink>
               <NextLink href="/admin/orders" passHref>
-                <ListItem selected button component="a">
+                <ListItem button component="a">
                   <ListItemText primary="Orders"></ListItemText>
+                </ListItem>
+              </NextLink>
+              <NextLink href="/admin/products" passHref>
+                <ListItem selected button component="a">
+                  <ListItemText primary="Products"></ListItemText>
                 </ListItem>
               </NextLink>
             </List>
@@ -92,7 +97,7 @@ function AdminDashboard() {
             <List>
               <ListItem>
                 <Typography component="h1" variant="h1">
-                  Orders
+                  Products
                 </Typography>
               </ListItem>
               <ListItem>
@@ -106,40 +111,38 @@ function AdminDashboard() {
                       <TableHead>
                         <TableRow>
                           <TableCell>ID</TableCell>
-                          <TableCell>user</TableCell>
-                          <TableCell>Tanggal</TableCell>
-                          <TableCell>Total</TableCell>
-                          <TableCell>Pengiriman</TableCell>
-                          <TableCell>Action</TableCell>
+                          <TableCell>Nama</TableCell>
+                          <TableCell>Harga</TableCell>
+                          <TableCell>Kategori</TableCell>
+                          <TableCell>Count</TableCell>
+                          <TableCell>Actions</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {orders.map((order) => (
-                          <TableRow key={order._id}>
+                        {products.map((product) => (
+                          <TableRow key={product._id}>
                             <TableCell>
-                              {order._id.substring(20, 24)}
+                              {product._id.substring(20, 24)}
                             </TableCell>
+                            <TableCell>{product.name}</TableCell>
+                            <TableCell>Rp. {product.price}</TableCell>
+                            <TableCell>{product.category}</TableCell>
+                            <TableCell>{product.countInStock}</TableCell>
                             <TableCell>
-                              {order.user ? order.user.name:'MENGHAPUS USER'}
-                            </TableCell>
-                            <TableCell>
-                              {order.createdAt}
-                            </TableCell>
-                            <TableCell>
-                              Rp. {order.totalPrice}
-                            </TableCell>
-                            <TableCell>
-                              { order.isDelivered
-                                ? `delivered at ${order.deliveredAt}`
-                                : 'belum di antar'
-                              }
-                            </TableCell>
-                            <TableCell>
-                              <NextLink href={`/order/${order._id}`} passHref>
-                                <Button variant="contained">
-                                  Details
+                              <NextLink
+                                href={`/admin/product/${product._id}`}
+                                passHref
+                              >
+                                <Button size="small" variant="contained">
+                                  Edit
                                 </Button>
-                              </NextLink>
+                              </NextLink>{' '}
+                              <Button
+                                size="small"
+                                variant="contained"
+                              >
+                                Delete
+                              </Button>
                             </TableCell>
                           </TableRow>
                         ))}
