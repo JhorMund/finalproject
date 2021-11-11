@@ -47,8 +47,8 @@ function Profile() {
 
   }, []);
   const submitHandler = async ({name, email, password, confirmPassword}) => {
+    closeSnackbar();
     if(password !== confirmPassword) {
-      closeSnackbar();
       enqueueSnackbar( "Password tidak cocok", { variant:'error' });
       return;
     }
