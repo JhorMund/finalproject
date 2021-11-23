@@ -27,6 +27,7 @@ import { getError } from '../utils/error';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import profile from './profile';
 
 function PlaceOrder() {
   const classes = useStyles();
@@ -99,6 +100,7 @@ function PlaceOrder() {
                   <ListItem>
                     {shippingAddress.fullName}, {''}
                     {shippingAddress.address}, {''}
+                    {shippingAddress.message}, {''}
                     {shippingAddress.numberPhone}
                   </ListItem>
                 </List>
@@ -119,10 +121,10 @@ function PlaceOrder() {
                             Image
                           </TableCell>
                           <TableCell>
-                            Nama
+                            Nama Pengiriman
                           </TableCell>
                           <TableCell align="right">
-                            Quantity
+                            Nama Penerima
                           </TableCell>
                           <TableCell align="right">
                             Harga
@@ -144,15 +146,13 @@ function PlaceOrder() {
                                 </Link>
                               </NextLink>
                             </TableCell>
-                            <TableCell>
-                              <NextLink href={`/product/${item.slug}`} passHref>
+                            <TableCell align="right">
                                 <Link>
-                                  <Typography>{item.name}</Typography>
+                                  <Typography>{shippingAddress.name}</Typography>
                                 </Link>
-                              </NextLink>
                             </TableCell>
                             <TableCell align="right">
-                              <Typography>{item.quantity}</Typography>
+                              <Typography>{profile.name}</Typography>
                             </TableCell>
                             <TableCell align="right">
                               <Typography>Rp.{item.price}</Typography>

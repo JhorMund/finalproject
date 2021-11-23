@@ -82,7 +82,7 @@ export default function Register() {
                   variant="outlined" 
                   fullWidth 
                   id="name"
-                  label="Name"
+                  label="Nama User"
                   inputProps={{ type: 'name'}}
                   error={Boolean(errors.name)}
                   helperText={
@@ -169,7 +169,7 @@ export default function Register() {
                     variant="outlined" 
                     fullWidth 
                     id="confirmPassword"
-                    label="Confirm Password"
+                    label="Konfirmasi Password"
                     inputProps={{ type: 'password'}}
                     error={Boolean(errors.confirmPassword)}
                     helperText={

@@ -26,6 +26,7 @@ import { useSnackbar } from 'notistack';
 import { getError } from '../../utils/error';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import profile from '../profile';
 
 function reducer( state, action ) {
   switch ( action.type ){
@@ -127,6 +128,7 @@ function Order({ params }) {
                     <ListItem>
                       {shippingAddress.fullName}, {''}
                       {shippingAddress.address}, {''}
+                      {shippingAddress.message}, {''}
                       {shippingAddress.numberPhone}
                     </ListItem>
                     <ListItem>
@@ -154,10 +156,10 @@ function Order({ params }) {
                               Image
                             </TableCell>
                             <TableCell>
-                              Nama
+                              Nama Pengiriman
                             </TableCell>
                             <TableCell align="right">
-                              Quantity
+                              Nama Penerima
                             </TableCell>
                             <TableCell align="right">
                               Harga
@@ -179,15 +181,11 @@ function Order({ params }) {
                                   </Link>
                                 </NextLink>
                               </TableCell>
-                              <TableCell>
-                                <NextLink href={`/product/${item.slug}`} passHref>
-                                  <Link>
-                                    <Typography>{item.name}</Typography>
-                                  </Link>
-                                </NextLink>
+                              <TableCell align="right">
+                                <Typography>{shippingAddress.name}</Typography>
                               </TableCell>
                               <TableCell align="right">
-                                <Typography>{item.quantity}</Typography>
+                                <Typography>{profile.name}</Typography>
                               </TableCell>
                               <TableCell align="right">
                                 <Typography>Rp.{item.price}</Typography>

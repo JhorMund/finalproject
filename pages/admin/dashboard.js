@@ -150,23 +150,6 @@ function AdminDashboard() {
                         </CardActions>
                       </Card>
                     </Grid>
-                    <Grid item md={3}>
-                      <Card raised>
-                        <CardContent>
-                          <Typography variant="h1">
-                            {summary.usersCount}
-                          </Typography>
-                          <Typography>Users</Typography>
-                        </CardContent>
-                        <CardActions>
-                          <NextLink href="/admin/users" passHref>
-                            <Button size="small" color="primary">
-                              View users
-                            </Button>
-                          </NextLink>
-                        </CardActions>
-                      </Card>
-                    </Grid>
                   </Grid>
                 )}
               </ListItem>

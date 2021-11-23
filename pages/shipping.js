@@ -33,6 +33,7 @@ export default function Shipping() {
     }
     setValue ( 'fullName', shippingAddress.fullName );
     setValue ( 'address', shippingAddress.address );
+    setValue ( 'message', shippingAddress.message );
     setValue ( 'numberPhone', shippingAddress.numberPhone );
   },[]);
   
@@ -41,16 +42,19 @@ export default function Shipping() {
   const submitHandler = ({
     fullName,
     address,
+    message,
     numberPhone,
   }) => {
       dispatch({ type: 'SAVE_SHIPPING_ADDRESS', payload: {
         fullName,
         address,
+        message,
         numberPhone,
       }});
       Cookies.set('shippingAddress', JSON.stringify({
         fullName,
         address,
+        message,
         numberPhone,
       }));
       router.push('/placeorder');
@@ -115,6 +119,34 @@ export default function Shipping() {
                     ? errors.address.type === 'minLength' 
                     ? 'Alamat Rumah Kurang, Isi Lebih Dari 1' 
                     : 'Alamat Rumah Kosong'
+                    : ''
+                  }
+                  { ...field }
+                ></TextField>
+              )}
+            ></Controller>
+          </ListItem>
+          <ListItem>
+            <Controller
+              name="message"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: true,
+                minLength: 2,
+              }}
+              render = {({field}) => (
+                <TextField
+                  variant="outlined" 
+                  fullWidth 
+                  id="message"
+                  label="Pesan-pesan yang di terima"
+                  error={Boolean(errors.message)}
+                  helperText={
+                    errors.message 
+                    ? errors.message.type === 'minLength' 
+                    ? 'Pesan-pesan Kurang, Isi Lebih Dari 1' 
+                    : 'Pesan-pesan Kosong'
                     : ''
                   }
                   { ...field }

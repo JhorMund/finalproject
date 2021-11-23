@@ -2,7 +2,7 @@ import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
-import React, { useEffect, useContext, useReducer } from 'react';
+import React, { useEffect, useContext, useReducer, useState } from 'react';
 import {
   Grid,
   List,
@@ -29,6 +29,23 @@ function reducer(state, action) {
       return { ...state, loading: false, error: '' };
     case 'FETCH_FAIL':
       return { ...state, loading: false, error: action.payload };
+    case 'UPDATE_REQUEST':
+      return { ...state, loadingUpdate: true, errorUpdate: '' };
+    case 'UPDATE_SUCCESS':
+      return { ...state, loadingUpdate: false, errorUpdate: '' };
+    case 'UPDATE_FAIL':
+      return { ...state, loadingUpdate: false, errorUpdate: action.payload };
+    case 'UPLOAD_REQUEST':
+      return { ...state, loadingUpload: true, errorUpload: '' };
+    case 'UPLOAD_SUCCESS':
+      return {
+        ...state,
+        loadingUpload: false,
+        errorUpload: '',
+      };
+    case 'UPLOAD_FAIL':
+      return { ...state, loadingUpload: false, errorUpload: action.payload };
+
     default:
       return state;
   }
@@ -37,7 +54,7 @@ function reducer(state, action) {
 function ProductEdit({ params }) {
   const productId = params.id;
   const { state } = useContext(Store);
-  const [{ loading, error, loadingUpdate }, dispatch] =
+  const [{ loading, error, loadingUpdate, loadingUpload }, dispatch] =
     useReducer(reducer, {
       loading: true,
       error: '',
@@ -78,6 +95,26 @@ function ProductEdit({ params }) {
       fetchData();
     }
   }, []);
+  const uploadHandler = async (e, imageField = 'image') => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('file', file);
+    try {
+      dispatch({ type: 'UPLOAD_REQUEST' });
+      const { data } = await axios.post('/api/admin/upload', bodyFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          authorization: `Bearer ${userInfo.token}`,
+        },
+      });
+      dispatch({ type: 'UPLOAD_SUCCESS' });
+      setValue(imageField, data.secure_url);
+      enqueueSnackbar('Upload File Telah Berhasil', { variant: 'success' });
+    } catch (err) {
+      dispatch({ type: 'UPLOAD_FAIL', payload: getError(err) });
+      enqueueSnackbar(getError(err), { variant: 'error' });
+    }
+  };
 
   const submitHandler = async ({
     name,
@@ -85,6 +122,8 @@ function ProductEdit({ params }) {
     price,
     category,
     image,
+    featuredImage,
+    brand,
     countInStock,
     description,
   }) => {
@@ -99,19 +138,24 @@ function ProductEdit({ params }) {
           price,
           category,
           image,
+          isFeatured,
+          featuredImage,
+          brand,
           countInStock,
           description,
         },
         { headers: { authorization: `Bearer ${userInfo.token}` } }
       );
       dispatch({ type: 'UPDATE_SUCCESS' });
-      enqueueSnackbar('Product updated successfully', { variant: 'success' });
+      enqueueSnackbar('Update Produk Telah Berhasil', { variant: 'success' });
       router.push('/admin/products');
     } catch (err) {
       dispatch({ type: 'UPDATE_FAIL', payload: getError(err) });
       enqueueSnackbar(getError(err), { variant: 'error' });
     }
   };
+
+  const [isFeatured] = useState(false);
 
   return (
     <Layout title={`Edit Product ${productId}`}>
@@ -172,7 +216,7 @@ function ProductEdit({ params }) {
                             id="name"
                             label="Nama"
                             error={Boolean(errors.name)}
-                            helperText={errors.name ? 'Nama Isi' : ''}
+                            helperText={errors.name ? 'isi Nama' : ''}
                             {...field}
                           ></TextField>
                         )}
@@ -193,7 +237,7 @@ function ProductEdit({ params }) {
                             id="slug"
                             label="Slug"
                             error={Boolean(errors.slug)}
-                            helperText={errors.slug ? 'Slug Isi' : ''}
+                            helperText={errors.slug ? 'isi Slug' : ''}
                             {...field}
                           ></TextField>
                         )}
@@ -214,7 +258,7 @@ function ProductEdit({ params }) {
                             id="price"
                             label="Harga"
                             error={Boolean(errors.price)}
-                            helperText={errors.price ? 'Harga Isi' : ''}
+                            helperText={errors.price ? 'Isi Harga' : ''}
                             {...field}
                           ></TextField>
                         )}
@@ -235,11 +279,18 @@ function ProductEdit({ params }) {
                             id="image"
                             label="Gambar"
                             error={Boolean(errors.image)}
-                            helperText={errors.image ? 'Gambar Isi' : ''}
+                            helperText={errors.image ? 'Isi Gambar' : ''}
                             {...field}
                           ></TextField>
                         )}
                       ></Controller>
+                    </ListItem>
+                    <ListItem>
+                      <Button variant="contained" component="label">
+                        Upload File
+                        <input type="file" onChange={uploadHandler} hidden />
+                      </Button>
+                      {loadingUpload && <CircularProgress />}
                     </ListItem>
                     <ListItem>
                       <Controller
@@ -257,7 +308,7 @@ function ProductEdit({ params }) {
                             label="Kategori"
                             error={Boolean(errors.category)}
                             helperText={
-                              errors.category ? 'Kategori Isi' : ''
+                              errors.category ? 'isi Kategori' : ''
                             }
                             {...field}
                           ></TextField>
@@ -281,7 +332,7 @@ function ProductEdit({ params }) {
                             error={Boolean(errors.countInStock)}
                             helperText={
                               errors.countInStock
-                                ? 'Hitungan Stok Isi'
+                                ? 'isi Hitungan Stok'
                                 : ''
                             }
                             {...field}
@@ -307,7 +358,7 @@ function ProductEdit({ params }) {
                             error={Boolean(errors.description)}
                             helperText={
                               errors.description
-                                ? 'Deskripsi Isi'
+                                ? 'isi Deskripsi'
                                 : ''
                             }
                             {...field}

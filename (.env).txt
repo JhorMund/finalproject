@@ -1,6 +1,5 @@
-MONGODB_URI=mongodb://jhordy:mongodb@cluster0-shard-00-00.v2jlu.mongodb.net:27017,cluster0-shard-00-01.v2jlu.mongodb.net:27017,cluster0-shard-00-02.v2jlu.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-ew8vq5-shard-0&authSource=admin&retryWrites=true&w=majority
+MONGODB_URI=mongodb://jhordy:mongodb@cluster0-shard-00-00.xcn7o.mongodb.net:27017,cluster0-shard-00-01.xcn7o.mongodb.net:27017,cluster0-shard-00-02.xcn7o.mongodb.net:27017/myFirstDatabase?ssl=true&replicaSet=atlas-pfo62f-shard-0&authSource=admin&retryWrites=true&w=majority
 (kasih konek di mongodb dan konek di versi 2.2.12)
 
 JWT_SECRET=somethingsecret
-
-kalau sudah kasih pancing di localhost:3000/api/seed, sudah tersambung maka pake deh
+(kalau sudah kasih pancing di localhost:3000/api/seed, sudah tersambung maka pake deh)
